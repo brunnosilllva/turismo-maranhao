@@ -1,1 +1,168 @@
-
+{
+  "polo_turistico": {
+    "nome": "Lençóis Maranhenses e Região",
+    "descricao": "Polo turístico com paisagens únicas e rica cultura local",
+    "centro": {
+      "lat": -2.6,
+      "lng": -43.0
+    }
+  },
+  "municipios": [
+    {
+      "id": "barreirinhas",
+      "nome": "Barreirinhas",
+      "coordenadas": {
+        "lat": -2.7483,
+        "lng": -42.8251
+      },
+      "informacoes": {
+        "populacao": "62.000 habitantes",
+        "area": "3.111 km²",
+        "descricao": "Portal de entrada dos Lençóis Maranhenses, conhecido mundialmente por suas dunas e lagoas cristalinas.",
+        "economia": "Turismo, pesca, agricultura",
+        "clima": "Tropical quente e semi-úmido",
+        "melhor_epoca": "Maio a Setembro (lagoas cheias)"
+      },
+      "pontos_turisticos": [
+        {
+          "id": "lagoa_azul",
+          "nome": "Lagoa Azul",
+          "coordenadas": {
+            "lat": -2.7400,
+            "lng": -42.8200
+          },
+          "tipo": "natureza",
+          "categoria": "lagoa",
+          "descricao": "Uma das lagoas mais famosas dos Lençóis Maranhenses, com águas cristalinas e areia branca.",
+          "atividades": [
+            "Banho",
+            "Fotografia",
+            "Contemplação",
+            "Caminhada nas dunas"
+          ],
+          "infraestrutura": {
+            "acesso": "4x4 + caminhada",
+            "dificuldade": "Média",
+            "tempo_visita": "2-3 horas",
+            "melhor_horario": "Manhã (7h-10h) ou tarde (15h-18h)"
+          },
+          "midia": {
+            "fotos": [
+              "images/barreirinhas/lagoa_azul_1.jpg",
+              "images/barreirinhas/lagoa_azul_2.jpg",
+              "images/barreirinhas/lagoa_azul_panoramica.jpg"
+            ],
+            "videos": [
+              "videos/lagoa_azul_drone.mp4"
+            ]
+          },
+          "dados_campo": {
+            "temperatura_agua": "24-28°C",
+            "profundidade_max": "3 metros",
+            "transparencia": "Excelente",
+            "coordenadas_exatas": "Coletadas com GPS",
+            "observacoes": "Lagoa com maior volume de água entre maio e setembro"
+          }
+        },
+        {
+          "id": "lagoa_bonita",
+          "nome": "Lagoa Bonita",
+          "coordenadas": {
+            "lat": -2.7350,
+            "lng": -42.8150
+          },
+          "tipo": "natureza",
+          "categoria": "lagoa",
+          "descricao": "Lagoa cristalina cercada por dunas brancas, ideal para relaxamento e contemplação.",
+          "atividades": [
+            "Banho",
+            "Trilha",
+            "Relaxamento",
+            "Observação da natureza"
+          ],
+          "infraestrutura": {
+            "acesso": "4x4",
+            "dificuldade": "Fácil",
+            "tempo_visita": "1-2 horas",
+            "melhor_horario": "Todo o dia"
+          },
+          "midia": {
+            "fotos": [
+              "images/barreirinhas/lagoa_bonita_1.jpg",
+              "images/barreirinhas/lagoa_bonita_nascer_sol.jpg"
+            ],
+            "videos": [
+              "videos/lagoa_bonita_time_lapse.mp4"
+            ]
+          },
+          "dados_campo": {
+            "temperatura_agua": "25-29°C",
+            "profundidade_max": "2.5 metros",
+            "transparencia": "Muito boa",
+            "fauna": "Peixes pequenos, aves aquáticas",
+            "observacoes": "Menos movimentada que a Lagoa Azul"
+          }
+        }
+      ]
+    },
+    {
+      "id": "santo_amaro",
+      "nome": "Santo Amaro do Maranhão",
+      "coordenadas": {
+        "lat": -2.5167,
+        "lng": -43.2500
+      },
+      "informacoes": {
+        "populacao": "15.000 habitantes",
+        "area": "1.202 km²",
+        "descricao": "Município histórico com acesso privilegiado aos Lençóis e rica cultura local.",
+        "economia": "Turismo, pesca, artesanato",
+        "clima": "Tropical quente e semi-úmido",
+        "patrimonio": "Arquitetura colonial preservada"
+      },
+      "pontos_turisticos": [
+        {
+          "id": "farol_mandacaru",
+          "nome": "Farol de Mandacaru",
+          "coordenadas": {
+            "lat": -2.5100,
+            "lng": -43.2400
+          },
+          "tipo": "historico",
+          "categoria": "patrimonio",
+          "descricao": "Farol histórico de 35 metros de altura com vista panorâmica de 360° da região.",
+          "atividades": [
+            "Visitação",
+            "Vista panorâmica",
+            "Fotografia",
+            "Aprendizado histórico"
+          ],
+          "infraestrutura": {
+            "acesso": "Carro comum",
+            "dificuldade": "Fácil",
+            "tempo_visita": "1 hora",
+            "funcionamento": "8h às 17h",
+            "entrada": "R$ 5,00"
+          },
+          "midia": {
+            "fotos": [
+              "images/santo_amaro/farol_mandacaru_externa.jpg",
+              "images/santo_amaro/farol_vista_panoramica.jpg",
+              "images/santo_amaro/farol_por_do_sol.jpg"
+            ],
+            "videos": [
+              "videos/farol_mandacaru_360.mp4"
+            ]
+          },
+          "dados_campo": {
+            "altura": "35 metros",
+            "ano_construcao": "1940",
+            "estado_conservacao": "Bom",
+            "visitantes_dia": "150-200 pessoas",
+            "observacoes": "Melhor vista ao final da tarde"
+          }
+        }
+      ]
+    }
+  ]
+}
