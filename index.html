@@ -1,1 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turismo Maranhão - Polo Turístico Interativo</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #ff6b35;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23228B22" width="1200" height="600"/><path fill="%23FFD700" d="M0 300 L200 200 L400 350 L600 250 L800 300 L1000 200 L1200 250 V600 H0 Z"/></svg>');
+            background-size: cover;
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .map-container {
+            height: 500px;
+            margin: 2rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .municipality-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .municipality-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .tourist-point-card {
+            background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+            border: none;
+            border-radius: 12px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tourist-point-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .icon-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .beach-icon { background: var(--info-color); }
+        .historic-icon { background: var(--secondary-color); }
+        .nature-icon { background: var(--success-color); }
+        .cultural-icon { background: var(--primary-color); }
+        
+        .modal-img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .navigation-breadcrumb {
+            background: rgba(255,255,255,0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .btn-custom {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(0,0,0,0.8);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="fas fa-map-marked-alt me-2"></i>Turismo Maranhão</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#municipalities">Municípios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">Sobre</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4 pulse">Descubra o Maranhão</h1>
+            <p class="lead fs-4 mb-4">Explore os tesouros turísticos do nosso estado através de mapas interativos</p>
+            <button class="btn btn-custom btn-lg" onclick="showMainMap()">
+                <i class="fas fa-compass me-2"></i>Começar Exploração
+            </button>
+        </div>
+    </section>
+
+    <!-- Navigation Breadcrumb -->
+    <div class="container">
+        <div class="navigation-breadcrumb" id="breadcrumb" style="display: none;">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0" id="breadcrumbList">
+                    <li class="breadcrumb-item"><a href="#" onclick="showMainMap()">Polo Turístico</a></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Main Map View -->
+        <div id="mainMapSection">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0"><i class="fas fa-map me-2"></i>Mapa do Polo Turístico</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="mainMap" class="map-container"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="stats-card">
+                        <i class="fas fa-city fa-3x text-primary mb-3"></i>
+                        <h4>5 Municípios</h4>
+                        <p class="text-muted">Conectados no polo turístico</p>
+                    </div>
+                    <div class="stats-card">
+                        <i class="fas fa-map-pin fa-3x text-success mb-3"></i>
+                        <h4>50+ Pontos</h4>
+                        <p class="text-muted">Turísticos mapeados</p>
+                    </div>
+                    <div class="stats-card">
+                        <i class="fas fa-images fa-3x text-warning mb-3"></i>
+                        <h4>200+ Fotos</h4>
+                        <p class="text-muted">E vídeos coletados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Municipality View -->
+        <div id="municipalitySection" style="display: none;">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header text-white" id="municipalityHeader">
+                            <h3 class="mb-0"><i class="fas fa-building me-2"></i><span id="municipalityName">Município</span></h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="municipalityMap" class="map-container"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações</h5>
+                        </div>
+                        <div class="card-body" id="municipalityInfo">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tourist Points Cards -->
+            <div class="row mt-4" id="touristPointsContainer">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Tourist Point Details -->
+    <div class="modal fade" id="touristPointModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Ponto Turístico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom" onclick="sharePoint()">
+                        <i class="fab fa-whatsapp me-2"></i>Compartilhar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 Turismo Maranhão. Desenvolvido com ❤️ para valorizar nosso estado.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Dados simulados - substitua pelos seus dados do Excel
+        const touristData = {
+            municipalities: [
+                {
+                    id: 'barreirinhas',
+                    name: 'Barreirinhas',
+                    lat: -2.7483,
+                    lng: -42.8251,
+                    description: 'Portal de entrada dos Lençóis Maranhenses',
+                    population: '62.000 habitantes',
+                    area: '3.111 km²',
+                    touristPoints: [
+                        {
+                            id: 1,
+                            name: 'Lagoa Azul',
+                            lat: -2.7400,
+                            lng: -42.8200,
+                            type: 'nature',
+                            description: 'Uma das lagoas mais famosas dos Lençóis Maranhenses',
+                            images: ['https://via.placeholder.com/400x300/4287f5/ffffff?text=Lagoa+Azul'],
+                            videos: [],
+                            activities: ['Banho', 'Fotografia', 'Contemplação']
+                        },
+                        {
+                            id: 2,
+                            name: 'Lagoa Bonita',
+                            lat: -2.7350,
+                            lng: -42.8150,
+                            type: 'nature',
+                            description: 'Lagoa cristalina cercada por dunas brancas',
+                            images: ['https://via.placeholder.com/400x300/42f554/ffffff?text=Lagoa+Bonita'],
+                            videos: [],
+                            activities: ['Banho', 'Trilha', 'Relaxamento']
+                        }
+                    ]
+                },
+                {
+                    id: 'santo_amaro',
+                    name: 'Santo Amaro',
+                    lat: -2.5167,
+                    lng: -43.2500,
+                    description: 'Cidade histórica com belezas naturais',
+                    population: '15.000 habitantes',
+                    area: '1.202 km²',
+                    touristPoints: [
+                        {
+                            id: 3,
+                            name: 'Farol de Mandacaru',
+                            lat: -2.5100,
+                            lng: -43.2400,
+                            type: 'historic',
+                            description: 'Farol histórico com vista panorâmica',
+                            images: ['https://via.placeholder.com/400x300/f54242/ffffff?text=Farol+Mandacaru'],
+                            videos: [],
+                            activities: ['Visitação', 'Vista panorâmica', 'História']
+                        }
+                    ]
+                },
+                {
+                    id: 'humberto_campos',
+                    name: 'Humberto de Campos',
+                    lat: -2.5833,
+                    lng: -43.0167,
+                    description: 'Terra do poeta Humberto de Campos',
+                    population: '28.000 habitantes',
+                    area: '2.238 km²',
+                    touristPoints: [
+                        {
+                            id: 4,
+                            name: 'Casa do Poeta',
+                            lat: -2.5800,
+                            lng: -43.0100,
+                            type: 'cultural',
+                            description: 'Museu dedicado ao poeta Humberto de Campos',
+                            images: ['https://via.placeholder.com/400x300/9b42f5/ffffff?text=Casa+do+Poeta'],
+                            videos: [],
+                            activities: ['Visitação', 'Cultura', 'Literatura']
+                        }
+                    ]
+                },
+                {
+                    id: 'primeira_cruz',
+                    name: 'Primeira Cruz',
+                    lat: -2.4833,
+                    lng: -43.4167,
+                    description: 'Município com belas praias e mangues',
+                    population: '14.000 habitantes',
+                    area: '599 km²',
+                    touristPoints: [
+                        {
+                            id: 5,
+                            name: 'Praia de Caburê',
+                            lat: -2.4700,
+                            lng: -43.4000,
+                            type: 'beach',
+                            description: 'Praia paradisíaca entre o mar e o rio',
+                            images: ['https://via.placeholder.com/400x300/42ddf5/ffffff?text=Praia+Cabure'],
+                            videos: [],
+                            activities: ['Banho de mar', 'Passeio de barco', 'Pesca']
+                        }
+                    ]
+                },
+                {
+                    id: 'paulino_neves',
+                    name: 'Paulino Neves',
+                    lat: -2.6667,
+                    lng: -42.7833,
+                    description: 'Município com acesso aos Lençóis Maranhenses',
+                    population: '13.000 habitantes',
+                    area: '1.002 km²',
+                    touristPoints: [
+                        {
+                            id: 6,
+                            name: 'Lagoa da Gaivota',
+                            lat: -2.6600,
+                            lng: -42.7700,
+                            type: 'nature',
+                            description: 'Lagoa cercada por dunas com águas cristalinas',
+                            images: ['https://via.placeholder.com/400x300/f5d442/ffffff?text=Lagoa+Gaivota'],
+                            videos: [],
+                            activities: ['Banho', 'Fotografia', 'Caminhada']
+                        }
+                    ]
+                }
+            ]
+        };
+
+        let mainMap, municipalityMap;
+        let currentMunicipality = null;
+        let currentPoint = null;
+
+        // Inicializar mapa principal
+        function initMainMap() {
+            mainMap = L.map('mainMap').setView([-2.6, -43.0], 9);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mainMap);
+
+            // Adicionar marcadores dos municípios
+            touristData.municipalities.forEach(municipality => {
+                const marker = L.marker([municipality.lat, municipality.lng])
+                    .bindPopup(`
+                        <div class="text-center">
+                            <h5>${municipality.name}</h5>
+                            <p>${municipality.description}</p>
+                            <button class="btn btn-custom btn-sm" onclick="showMunicipality('${municipality.id}')">
+                                Explorar <i class="fas fa-arrow-right ms-1"></i>
+                            </button>
+                        </div>
+                    `)
+                    .addTo(mainMap);
+            });
+        }
+
+        // Mostrar mapa principal
+        function showMainMap() {
+            document.getElementById('mainMapSection').style.display = 'block';
+            document.getElementById('municipalitySection').style.display = 'none';
+            document.getElementById('breadcrumb').style.display = 'none';
+            
+            if (!mainMap) {
+                setTimeout(initMainMap, 100);
+            } else {
+                mainMap.invalidateSize();
+            }
+        }
+
+        // Mostrar município específico
+        function showMunicipality(municipalityId) {
+            const municipality = touristData.municipalities.find(m => m.id === municipalityId);
+            if (!municipality) return;
+
+            currentMunicipality = municipality;
+            
+            // Atualizar interface
+            document.getElementById('mainMapSection').style.display = 'none';
+            document.getElementById('municipalitySection').style.display = 'block';
+            document.getElementById('breadcrumb').style.display = 'block';
+            
+            // Atualizar breadcrumb
+            document.getElementById('breadcrumbList').innerHTML = `
+                <li class="breadcrumb-item"><a href="#" onclick="showMainMap()">Polo Turístico</a></li>
+                <li class="breadcrumb-item active">${municipality.name}</li>
+            `;
+            
+            // Atualizar header
+            document.getElementById('municipalityName').textContent = municipality.name;
+            document.getElementById('municipalityHeader').className = 'card-header text-white bg-primary';
+            
+            // Atualizar informações
+            document.getElementById('municipalityInfo').innerHTML = `
+                <h6><i class="fas fa-info-circle text-primary me-2"></i>Sobre ${municipality.name}</h6>
+                <p>${municipality.description}</p>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <strong><i class="fas fa-users text-info me-1"></i>População:</strong><br>
+                        <small>${municipality.population}</small>
+                    </div>
+                    <div class="col-6">
+                        <strong><i class="fas fa-map text-success me-1"></i>Área:</strong><br>
+                        <small>${municipality.area}</small>
+                    </div>
+                </div>
+            `;
+            
+            // Inicializar mapa do município
+            setTimeout(() => initMunicipalityMap(municipality), 100);
+            
+            // Criar cards dos pontos turísticos
+            createTouristPointCards(municipality.touristPoints);
+        }
+
+        // Inicializar mapa do município
+        function initMunicipalityMap(municipality) {
+            if (municipalityMap) {
+                municipalityMap.remove();
+            }
+            
+            municipalityMap = L.map('municipalityMap').setView([municipality.lat, municipality.lng], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(municipalityMap);
+
+            // Adicionar marcadores dos pontos turísticos
+            municipality.touristPoints.forEach(point => {
+                const iconClass = getIconClass(point.type);
+                const iconColor = getIconColor(point.type);
+                
+                const customIcon = L.divIcon({
+                    html: `<div style="background: ${iconColor}; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;"><i class="${iconClass}"></i></div>`,
+                    className: 'custom-marker',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const marker = L.marker([point.lat, point.lng], { icon: customIcon })
+                    .bindPopup(`
+                        <div class="text-center">
+                            <h6>${point.name}</h6>
+                            <p class="small">${point.description}</p>
+                            <button class="btn btn-custom btn-sm" onclick="showTouristPointModal(${point.id})">
+                                Ver Detalhes <i class="fas fa-eye ms-1"></i>
+                            </button>
+                        </div>
+                    `)
+                    .addTo(municipalityMap);
+            });
+        }
+
+        // Criar cards dos pontos turísticos
+        function createTouristPointCards(touristPoints) {
+            const container = document.getElementById('touristPointsContainer');
+            container.innerHTML = '';
+            
+            touristPoints.forEach(point => {
+                const iconClass = getIconClass(point.type);
+                const cardClass = getCardClass(point.type);
+                
+                const card = document.createElement('div');
+                card.className = 'col-md-6 col-lg-4';
+                card.innerHTML = `
+                    <div class="card tourist-point-card ${cardClass}" onclick="showTouristPointModal(${point.id})">
+                        <div class="card-body">
+                            <div class="icon-badge ${point.type}-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <h5 class="card-title">${point.name}</h5>
+                            <p class="card-text">${point.description}</p>
+                            <div class="d-flex flex-wrap gap-1 mb-3">
+                                ${point.activities.map(activity => 
+                                    `<span class="badge bg-secondary">${activity}</span>`
+                                ).join('')}
+                            </div>
+                            <button class="btn btn-custom btn-sm">
+                                <i class="fas fa-eye me-1"></i>Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Mostrar modal do ponto turístico
+        function showTouristPointModal(pointId) {
+            if (!currentMunicipality) return;
+            
+            const point = currentMunicipality.touristPoints.find(p => p.id === pointId);
+            if (!point) return;
+            
+            currentPoint = point;
+            
+            document.getElementById('modalTitle').innerHTML = `
+                <i class="${getIconClass(point.type)} me-2"></i>${point.name}
+            `;
+            
+            document.getElementById('modalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        ${point.images.map(img => 
+                            `<img src="${img}" class="modal-img" alt="${point.name}">`
+                        ).join('')}
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle text-primary me-2"></i>Descrição</h6>
+                        <p>${point.description}</p>
+                        
+                        <h6><i class="fas fa-list text-success me-2"></i>Atividades</h6>
+                        <ul class="list-unstyled">
+                            ${point.activities.map(activity => 
+                                `<li><i class="fas fa-check text-success me-2"></i>${activity}</li>`
+                            ).join('')}
+                        </ul>
+                        
+                        <h6><i class="fas fa-map-marker-alt text-danger me-2"></i>Localização</h6>
+                        <p>Latitude: ${point.lat}<br>Longitude: ${point.lng}</p>
+                    </div>
+                </div>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('touristPointModal')).show();
+        }
+
+        // Compartilhar ponto
+        function sharePoint() {
+            if (!currentPoint || !currentMunicipality) return;
+            
+            const message = `🏛️ Conheça ${currentPoint.name} em ${currentMunicipality.name}, Maranhão!\n\n${currentPoint.description}\n\n🗺️ Localização: ${currentPoint.lat}, ${currentPoint.lng}\n\n#TurismoMaranhao`;
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Funções auxiliares
+        function getIconClass(type) {
+            const icons = {
+                beach: 'fas fa-umbrella-beach',
+                historic: 'fas fa-monument',
+                nature: 'fas fa-tree',
+                cultural: 'fas fa-theater-masks'
+            };
+            return icons[type] || 'fas fa-map-pin';
+        }
+
+        function getIconColor(type) {
+            const colors = {
+                beach: '#17a2b8',
+                historic: '#ff6b35',
+                nature: '#28a745',
+                cultural: '#0066cc'
+            };
+            return colors[type] || '#6c757d';
+        }
+
+        function getCardClass(type) {
+            const classes = {
+                beach: 'border-info',
+                historic: 'border-warning',
+                nature: 'border-success',
+                cultural: 'border-primary'
+            };
+            return classes[type] || 'border-secondary';
+        }
+
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            showMainMap();
+        });
+    </script>
+</body>
+</html>
