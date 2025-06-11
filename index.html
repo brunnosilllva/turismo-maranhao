@@ -24,16 +24,67 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f9fa;
             min-height: 100vh;
         }
         
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23228B22" width="1200" height="600"/><path fill="%23FFD700" d="M0 300 L200 200 L400 350 L600 250 L800 300 L1000 200 L1200 250 V600 H0 Z"/></svg>');
-            background-size: cover;
+            position: relative;
             color: white;
-            padding: 4rem 0;
+            padding: 6rem 0;
             text-align: center;
+            overflow: hidden;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+        
+        .hero-slide.active {
+            opacity: 1;
+        }
+        
+        .hero-slide video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,100,0,0.7), rgba(0,50,100,0.7));
+            z-index: -1;
+        }
+        
+        .maranhao-flag {
+            width: 50px;
+            height: auto;
+            margin-left: 10px;
+            vertical-align: middle;
         }
         
         .map-container {
@@ -124,6 +175,21 @@
             text-align: center;
             margin: 1rem 0;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid #28a745;
+        }
+        
+        .presentation-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+            padding: 4rem 0;
+            margin: 3rem 0;
+        }
+        
+        .presentation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-left: 6px solid #2e7d32;
         }
         
         .pulse {
@@ -157,12 +223,60 @@
 
     <!-- Hero Section -->
     <section class="hero-section" id="home">
+        <div class="hero-background">
+            <!-- Slides de fundo (imagens e vídeos) -->
+            <div class="hero-slide active" style="background-image: url('images/hero/lencois_maranhenses_1.jpg')"></div>
+            <div class="hero-slide" style="background-image: url('images/hero/guaras_floresta_1.jpg')"></div>
+            <div class="hero-slide" style="background-image: url('images/hero/praia_cabure_1.jpg')"></div>
+            <div class="hero-slide">
+                <video autoplay muted loop>
+                    <source src="videos/hero/lencois_drone.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="hero-slide" style="background-image: url('images/hero/farol_mandacaru_1.jpg')"></div>
+        </div>
+        <div class="hero-overlay"></div>
         <div class="container">
-            <h1 class="display-3 fw-bold mb-4 pulse">Descubra o Maranhão</h1>
-            <p class="lead fs-4 mb-4">Explore os tesouros turísticos do nosso estado através de mapas interativos</p>
+            <h1 class="display-3 fw-bold mb-4 pulse">Polo Floresta dos Guarás</h1>
+            <p class="lead fs-4 mb-4">
+                Explore os tesouros turísticos do nosso estado
+                <img src="images/bandeira-maranhao.png" alt="Bandeira do Maranhão" class="maranhao-flag" 
+                     onerror="this.style.display='none'">
+            </p>
             <button class="btn btn-custom btn-lg" onclick="showMainMap()">
                 <i class="fas fa-compass me-2"></i>Começar Exploração
             </button>
+        </div>
+    </section>
+
+    <!-- Presentation Section -->
+    <section class="presentation-section">
+        <div class="container">
+            <div class="presentation-card">
+                <h2 class="text-center mb-4 text-success">
+                    <i class="fas fa-university me-3"></i>Apresentação
+                </h2>
+                <p class="lead text-justify">
+                    O <strong>Instituto Maranhense de Estudos Socioeconômicos e Cartográficos (IMESC)</strong> apresenta o estudo sobre os potenciais dos polos turísticos do estado do Maranhão. Iniciando esta série de publicações, com a análise do <strong>Polo Floresta dos Guarás</strong>.
+                </p>
+                <p>
+                    A referente pesquisa tem por objetivo assistir o planejamento público do turismo no estado do Maranhão, identificando locais e atividades com potencial de fomentar o turismo local e regional dentro do estado do Maranhão. Neste cenário, foi explorada a possibilidade de identificação dos pontos ambientalmente, culturalmente e socialmente atrativos para desenvolvimento desta atividade.
+                </p>
+                <p>
+                    O <strong>Polo turístico da Floresta dos Guarás</strong>, é formado por 10 municípios, com belas praias de belezas naturais, com fauna e flora preservadas, áreas banhadas com rios exuberantes, além de possuir uma riqueza social e cultural apresentadas por grupos tradicionais.
+                </p>
+                <div class="text-center mt-4">
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        <i class="fas fa-leaf me-2"></i>10 Municípios Preservados
+                    </span>
+                    <span class="badge bg-info fs-6 px-3 py-2 ms-2">
+                        <i class="fas fa-water me-2"></i>Rios Exuberantes
+                    </span>
+                    <span class="badge bg-warning fs-6 px-3 py-2 ms-2">
+                        <i class="fas fa-users me-2"></i>Grupos Tradicionais
+                    </span>
+                </div>
+            </div>
         </div>
     </section>
 
