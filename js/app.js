@@ -459,3 +459,248 @@ function getCardClass(tipo) {
 
 // Inicializar quando a página carregar
 document.addEventListener('DOMContentLoaded', initApp);
+// Sistema de filtros
+function initFilters() {
+    const filterContainer = document.getElementById('filtersContainer');
+    if (!filterContainer) return;
+    
+    const tipos = ['todos', 'natureza', 'praia', 'historico', 'cultural', 'religioso', 'aventura'];
+    
+    filterContainer.innerHTML = `
+        <div class="card border-0 shadow-lg mb-4">
+            <div class="card-header bg-gradient-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    ${tipos.map(tipo => `
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <button class="btn btn-outline-primary w-100 filter-btn ${tipo === 'todos' ? 'active' : ''}" 
+                                    data-filter="${tipo}" onclick="applyFilter('${tipo}')">
+                                <i class="${getFilterIcon(tipo)} me-1"></i>
+                                ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Buscar por nome:</label>
+                        <input type="text" class="form-control" id="searchInput" 
+                               placeholder="Digite o nome do local..." onkeyup="searchPoints()">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ordenar por:</label>
+                        <select class="form-select" id="sortSelect" onchange="sortPoints()">
+                            <option value="nome">Nome (A-Z)</option>
+                            <option value="tipo">Tipo</option>
+                            <option value="municipio">Município</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getFilterIcon(tipo) {
+    const icons = {
+        'todos': 'fas fa-globe',
+        'natureza': 'fas fa-tree',
+        'praia': 'fas fa-umbrella-beach',
+        'historico': 'fas fa-monument',
+        'cultural': 'fas fa-theater-masks',
+        'religioso': 'fas fa-place-of-worship',
+        'aventura': 'fas fa-mountain'
+    };
+    return icons[tipo] || 'fas fa-map-pin';
+}
+
+let currentFilter = 'todos';
+let allPoints = [];
+
+function initAllPoints() {
+    allPoints = [];
+    if (!touristData) return;
+    
+    touristData.municipios.forEach(municipio => {
+        municipio.pontos_turisticos.forEach(ponto => {
+            allPoints.push({
+                ...ponto,
+                municipio_nome: municipio.nome,
+                municipio_id: municipio.id
+            });
+        });
+    });
+}
+
+function applyFilter(tipo) {
+    currentFilter = tipo;
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.filter === tipo) {
+            btn.classList.add('active');
+        }
+    });
+    
+    updatePointsDisplay();
+}
+
+function searchPoints() {
+    updatePointsDisplay();
+}
+
+function sortPoints() {
+    updatePointsDisplay();
+}
+
+function updatePointsDisplay() {
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const sortBy = document.getElementById('sortSelect')?.value || 'nome';
+    
+    let filteredPoints = allPoints.filter(ponto => {
+        const matchesFilter = currentFilter === 'todos' || ponto.tipo === currentFilter;
+        const matchesSearch = ponto.nome.toLowerCase().includes(searchTerm) || 
+                            ponto.descricao.toLowerCase().includes(searchTerm) ||
+                            ponto.municipio_nome.toLowerCase().includes(searchTerm);
+        return matchesFilter && matchesSearch;
+    });
+    
+    // Ordenar pontos
+    filteredPoints.sort((a, b) => {
+        switch(sortBy) {
+            case 'tipo':
+                return a.tipo.localeCompare(b.tipo);
+            case 'municipio':
+                return a.municipio_nome.localeCompare(b.municipio_nome);
+            default:
+                return a.nome.localeCompare(b.nome);
+        }
+    });
+    
+    displayFilteredPoints(filteredPoints);
+}
+
+function displayFilteredPoints(points) {
+    const container = document.getElementById('allPointsContainer');
+    if (!container) return;
+    
+    if (points.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h5>Nenhum ponto encontrado</h5>
+                    <p>Tente ajustar os filtros ou termo de busca.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = points.map(ponto => `
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card tourist-point-card ${getCardClass(ponto.tipo)}" 
+                 onclick="showMunicipalityAndPoint('${ponto.municipio_id}', '${ponto.id}')">
+                <div class="card-body">
+                    <div class="icon-badge ${ponto.tipo}-icon">
+                        <i class="${getIconClass(ponto.tipo)}"></i>
+                    </div>
+                    <h6 class="card-title">${ponto.nome}</h6>
+                    <p class="card-text small">${ponto.descricao}</p>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>${ponto.municipio_nome}
+                        </small>
+                    </div>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        ${ponto.atividades.slice(0, 3).map(atividade => 
+                            `<span class="badge bg-secondary small">${atividade}</span>`
+                        ).join('')}
+                        ${ponto.atividades.length > 3 ? '<span class="badge bg-light text-dark small">+mais</span>' : ''}
+                    </div>
+                    <button class="btn btn-custom btn-sm">
+                        <i class="fas fa-eye me-1"></i>Ver Detalhes
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showMunicipalityAndPoint(municipioId, pontoId) {
+    showMunicipality(municipioId);
+    setTimeout(() => {
+        showTouristPointModal(pontoId);
+    }, 500);
+}
+
+// Adicionar página de todos os pontos
+function showAllPointsPage() {
+    document.getElementById('mainMapSection').style.display = 'none';
+    document.getElementById('municipalitySection').style.display = 'none';
+    document.getElementById('allPointsSection').style.display = 'block';
+    document.getElementById('breadcrumb').style.display = 'block';
+    
+    // Atualizar breadcrumb
+    document.getElementById('breadcrumbList').innerHTML = `
+        <li class="breadcrumb-item">
+            <a href="#" onclick="showMainMap()">Polo Turístico</a>
+        </li>
+        <li class="breadcrumb-item active">Todos os Pontos</li>
+    `;
+    
+    initAllPoints();
+    initFilters();
+    updatePointsDisplay();
+}
+
+// Adicionar estatísticas em tempo real
+function updateLiveStats() {
+    if (!allPoints.length) return;
+    
+    const stats = {
+        total: allPoints.length,
+        natureza: allPoints.filter(p => p.tipo === 'natureza').length,
+        historico: allPoints.filter(p => p.tipo === 'historico').length,
+        cultural: allPoints.filter(p => p.tipo === 'cultural').length,
+        praia: allPoints.filter(p => p.tipo === 'praia').length
+    };
+    
+    const statsContainer = document.getElementById('liveStats');
+    if (statsContainer) {
+        statsContainer.innerHTML = `
+            <div class="row text-center">
+                <div class="col">
+                    <div class="stat-item">
+                        <h3 class="text-primary">${stats.total}</h3>
+                        <small>Total</small>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-item">
+                        <h3 class="text-success">${stats.natureza}</h3>
+                        <small>Natureza</small>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-item">
+                        <h3 class="text-warning">${stats.historico}</h3>
+                        <small>Histórico</small>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-item">
+                        <h3 class="text-info">${stats.cultural}</h3>
+                        <small>Cultural</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
