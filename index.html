@@ -77,6 +77,13 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            filter: brightness(1.1) contrast(1.1);
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .hero-overlay {
@@ -85,7 +92,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, rgba(0,100,0,0.7), rgba(0,50,100,0.7));
+            background: linear-gradient(45deg, rgba(0,100,0,0.3), rgba(0,50,100,0.3));
             z-index: -1;
         }
         
@@ -298,9 +305,15 @@
         <div class="hero-background">
             <!-- Slide com vídeo -->
             <div class="hero-slide video-slide active">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="auto">
                     <source src="videos/hero/lencois_drone.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeos HTML5.
                 </video>
+                <!-- Indicador de carregamento temporário -->
+                <div class="video-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; z-index: 1;">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-2"></i><br>
+                    Carregando vídeo...
+                </div>
             </div>
             <!-- Slides com imagens de fallback -->
             <div class="hero-slide" style="background-image: url('https://via.placeholder.com/1920x1080/2e7d32/ffffff?text=Polo+Floresta+dos+Guarás')"></div>
@@ -340,7 +353,7 @@
                 <div class="text-center mt-4">
                     <h4 class="text-success mb-3">Principais Potenciais</h4>
                     <span class="badge bg-success fs-5 px-4 py-3 me-3 mb-2">
-                        <i class="fas fa-leaf me-2"></i> Praias Preservadas
+                        <i class="fas fa-umbrella-beach me-2"></i>Praias Preservadas
                     </span>
                     <span class="badge bg-info fs-5 px-4 py-3 me-3 mb-2">
                         <i class="fas fa-water me-2"></i>Rios Exuberantes
@@ -575,17 +588,43 @@
             
             if (video) {
                 console.log('Vídeo encontrado, configurando...');
+                console.log('Caminho do vídeo:', video.querySelector('source').src);
+                
+                video.addEventListener('loadstart', () => {
+                    console.log('Vídeo começou a carregar');
+                });
                 
                 video.addEventListener('loadeddata', () => {
                     console.log('Vídeo carregado com sucesso');
+                    videoSlide.style.opacity = '1';
+                    // Esconder indicador de carregamento
+                    const loading = videoSlide.querySelector('.video-loading');
+                    if (loading) loading.style.display = 'none';
+                });
+                
+                video.addEventListener('canplay', () => {
+                    console.log('Vídeo pode ser reproduzido');
+                    // Esconder indicador de carregamento
+                    const loading = videoSlide.querySelector('.video-loading');
+                    if (loading) loading.style.display = 'none';
+                });
+                
+                video.addEventListener('playing', () => {
+                    console.log('Vídeo está reproduzindo');
                 });
                 
                 video.addEventListener('error', (e) => {
                     console.error('Erro no vídeo:', e);
+                    console.error('Detalhes do erro:', video.error);
                     // Usar placeholder se o vídeo não carregar
                     videoSlide.style.backgroundImage = "url('https://via.placeholder.com/1920x1080/2e7d32/ffffff?text=Vídeo+Indisponível')";
                     video.style.display = 'none';
                 });
+                
+                // Tentar carregar manualmente
+                video.load();
+            } else {
+                console.log('Vídeo não encontrado no DOM');
             }
 
             // Trocar slides a cada 6 segundos
