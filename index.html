@@ -68,10 +68,15 @@
             opacity: 1;
         }
         
+        .hero-slide.video-slide {
+            background-image: none !important;
+        }
+        
         .hero-slide video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
         
         .hero-overlay {
@@ -195,6 +200,34 @@
             padding: 3rem;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             border-left: 6px solid #2e7d32;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+        
+        .presentation-card h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        
+        .presentation-card p {
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+            color: #444;
+        }
+        
+        .intro-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .main-content-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
         }
         
         .pulse {
@@ -216,9 +249,35 @@
                 padding: 2rem 1rem;
             }
             
+            .intro-section {
+                margin-bottom: 2rem;
+                padding: 1.5rem;
+            }
+            
             .maranhao-flag {
                 width: 30px;
             }
+            
+            .badge.fs-5 {
+                font-size: 0.9rem !important;
+                padding: 0.5rem 1rem !important;
+                margin: 0.2rem !important;
+                display: inline-block;
+                width: 100%;
+                margin-bottom: 0.5rem !important;
+            }
+        }
+        
+        /* Popup customization */
+        .leaflet-popup-content {
+            margin: 8px 12px;
+            line-height: 1.4;
+        }
+        
+        .popup-content h6 {
+            color: #2e7d32;
+            border-bottom: 2px solid #e8f5e8;
+            padding-bottom: 0.5rem;
         }
         
         /* Melhorias de acessibilidade */
@@ -227,7 +286,31 @@
         }
         
         .badge {
-            font-size: 0.8rem !important;
+            font-size: 0.9rem !important;
+        }
+        
+        /* Loading para vídeos */
+        .hero-slide.video-slide::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            z-index: 1;
+        }
+        
+        .hero-slide.video-slide.loaded::before {
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
@@ -256,9 +339,11 @@
             <div class="hero-slide active" style="background-image: url('images/hero/lencois_maranhenses_1.jpg')"></div>
             <div class="hero-slide" style="background-image: url('images/hero/guaras_floresta_1.jpg')"></div>
             <div class="hero-slide" style="background-image: url('images/hero/praia_cabure_1.jpg')"></div>
-            <div class="hero-slide">
-                <video autoplay muted loop>
+            <div class="hero-slide video-slide">
+                <video autoplay muted loop playsinline>
                     <source src="videos/hero/lencois_drone.mp4" type="video/mp4">
+                    <!-- Fallback para navegadores que não suportam vídeo -->
+                    <div style="background-image: url('images/hero/lencois_maranhenses_1.jpg'); width: 100%; height: 100%; background-size: cover; background-position: center;"></div>
                 </video>
             </div>
             <div class="hero-slide" style="background-image: url('images/hero/farol_mandacaru_1.jpg')"></div>
@@ -281,32 +366,101 @@
     <section class="presentation-section">
         <div class="container">
             <div class="presentation-card">
-                <h2 class="text-center mb-4 text-success">
+                <h2 class="text-center mb-4">
                     <i class="fas fa-university me-3"></i>Apresentação
                 </h2>
-                <p class="lead text-justify">
-                    O <strong>Instituto Maranhense de Estudos Socioeconômicos e Cartográficos (IMESC)</strong> apresenta o estudo sobre os potenciais dos polos turísticos do estado do Maranhão. Iniciando esta série de publicações, com a análise do <strong>Polo Floresta dos Guarás</strong>.
+                <p>
+                    O Instituto Maranhense de Estudos Socioeconômicos e Cartográficos (IMESC) apresenta o estudo sobre os potenciais dos polos turísticos do estado do Maranhão. Iniciando esta série de publicações, com a análise do Polo Floresta dos Guarás.
                 </p>
                 <p>
                     A referente pesquisa tem por objetivo assistir o planejamento público do turismo no estado do Maranhão, identificando locais e atividades com potencial de fomentar o turismo local e regional dentro do estado do Maranhão. Neste cenário, foi explorada a possibilidade de identificação dos pontos ambientalmente, culturalmente e socialmente atrativos para desenvolvimento desta atividade.
                 </p>
                 <p>
-                    O <strong>Polo turístico da Floresta dos Guarás</strong>, é formado por 10 municípios, com belas praias de belezas naturais, com fauna e flora preservadas, áreas banhadas com rios exuberantes, além de possuir uma riqueza social e cultural apresentadas por grupos tradicionais.
+                    O Polo turístico da Floresta dos Guarás, é formado por 10 municípios, com belas praias de belezas naturais, com fauna e flora preservadas, áreas banhadas com rios exuberantes, além de possuir uma riqueza social e cultural apresentadas por grupos tradicionais.
                 </p>
+                
                 <div class="text-center mt-4">
-                    <span class="badge bg-success fs-6 px-3 py-2">
+                    <h4 class="text-success mb-3">Principais Potenciais</h4>
+                    <span class="badge bg-success fs-5 px-4 py-3 me-3 mb-2">
                         <i class="fas fa-leaf me-2"></i>10 Municípios Preservados
                     </span>
-                    <span class="badge bg-info fs-6 px-3 py-2 ms-2">
+                    <span class="badge bg-info fs-5 px-4 py-3 me-3 mb-2">
                         <i class="fas fa-water me-2"></i>Rios Exuberantes
                     </span>
-                    <span class="badge bg-warning fs-6 px-3 py-2 ms-2">
+                    <span class="badge bg-warning fs-5 px-4 py-3 mb-2">
                         <i class="fas fa-users me-2"></i>Grupos Tradicionais
                     </span>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Main Content Section -->
+    <section class="main-content-section" id="main-content">
+        <div class="container my-5">
+            <!-- Main Map View -->
+            <div id="mainMapSection">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-lg">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="mb-0"><i class="fas fa-map me-2"></i>Mapa do Polo Turístico</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="mainMap" class="map-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="intro-section">
+                            <h4 class="text-primary mb-3">
+                                <i class="fas fa-map-marked-alt me-2"></i>Polo Floresta dos Guarás
+                            </h4>
+                            <p>
+                                O Polo Floresta dos Guarás é composto por dez municípios estrategicamente localizados no litoral norte do Maranhão, formando um mosaico de paisagens únicas que combinam praias paradisíacas, manguezais preservados e comunidades tradicionais.
+                            </p>
+                            <p>
+                                Os municípios de <strong>Barreirinhas</strong>, <strong>Santo Amaro do Maranhão</strong>, <strong>Primeira Cruz</strong>, <strong>Humberto de Campos</strong>, <strong>Paulino Neves</strong>, <strong>Tutóia</strong>, <strong>Araioses</strong>, <strong>Água Doce do Maranhão</strong>, <strong>Santana do Maranhão</strong> e <strong>Magalhães de Almeida</strong> oferecem experiências autênticas de turismo ecológico e cultural.
+                            </p>
+                            <p>
+                                <strong>A importância do turismo</strong> para esta região transcende a geração de renda, promovendo a preservação ambiental, o fortalecimento das culturas locais e o desenvolvimento sustentável das comunidades. O ecoturismo e o turismo comunitário emergem como ferramentas de conservação e valorização do patrimônio natural e cultural maranhense.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards Below Map -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-city fa-3x text-primary mb-3"></i>
+                            <h4>10 Municípios</h4>
+                            <p class="text-muted">Conectados no polo turístico</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-map-pin fa-3x text-success mb-3"></i>
+                            <h4>50+ Pontos</h4>
+                            <p class="text-muted">Turísticos mapeados</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-images fa-3x text-warning mb-3"></i>
+                            <h4>200+ Fotos</h4>
+                            <p class="text-muted">E vídeos coletados</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h4>15+ Comunidades</h4>
+                            <p class="text-muted">Tradicionais preservadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
     <!-- Navigation Breadcrumb -->
     <div class="container">
@@ -335,20 +489,51 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
+                    <div class="intro-section">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-map-marked-alt me-2"></i>Polo Floresta dos Guarás
+                        </h4>
+                        <p>
+                            O Polo Floresta dos Guarás é composto por dez municípios estrategicamente localizados no litoral norte do Maranhão, formando um mosaico de paisagens únicas que combinam praias paradisíacas, manguezais preservados e comunidades tradicionais.
+                        </p>
+                        <p>
+                            Os municípios de <strong>Barreirinhas</strong>, <strong>Santo Amaro do Maranhão</strong>, <strong>Primeira Cruz</strong>, <strong>Humberto de Campos</strong>, <strong>Paulino Neves</strong>, <strong>Tutóia</strong>, <strong>Araioses</strong>, <strong>Água Doce do Maranhão</strong>, <strong>Santana do Maranhão</strong> e <strong>Magalhães de Almeida</strong> oferecem experiências autênticas de turismo ecológico e cultural.
+                        </p>
+                        <p>
+                            <strong>A importância do turismo</strong> para esta região transcende a geração de renda, promovendo a preservação ambiental, o fortalecimento das culturas locais e o desenvolvimento sustentável das comunidades. O ecoturismo e o turismo comunitário emergem como ferramentas de conservação e valorização do patrimônio natural e cultural maranhense.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards Below Map -->
+            <div class="row mt-4">
+                <div class="col-md-3">
                     <div class="stats-card">
                         <i class="fas fa-city fa-3x text-primary mb-3"></i>
-                        <h4>5 Municípios</h4>
+                        <h4>10 Municípios</h4>
                         <p class="text-muted">Conectados no polo turístico</p>
                     </div>
+                </div>
+                <div class="col-md-3">
                     <div class="stats-card">
                         <i class="fas fa-map-pin fa-3x text-success mb-3"></i>
                         <h4>50+ Pontos</h4>
                         <p class="text-muted">Turísticos mapeados</p>
                     </div>
+                </div>
+                <div class="col-md-3">
                     <div class="stats-card">
                         <i class="fas fa-images fa-3x text-warning mb-3"></i>
                         <h4>200+ Fotos</h4>
                         <p class="text-muted">E vídeos coletados</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-users fa-3x text-info mb-3"></i>
+                        <h4>15+ Comunidades</h4>
+                        <p class="text-muted">Tradicionais preservadas</p>
                     </div>
                 </div>
             </div>
@@ -419,7 +604,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Dados simulados - substitua pelos seus dados do Excel
+        // Dados simulados - filtrados para o Polo Floresta dos Guarás
         const touristData = {
             municipalities: [
                 {
@@ -457,9 +642,204 @@
                 },
                 {
                     id: 'santo_amaro',
-                    name: 'Santo Amaro',
+                    name: 'Santo Amaro do Maranhão',
                     lat: -2.5167,
                     lng: -43.2500,
+                    description: 'Cidade histórica com belezas naturais',
+                    population: '15.000 habitantes',
+                    area: '1.202 km²',
+                    touristPoints: [
+                        {
+                            id: 3,
+                            name: 'Farol de Mandacaru',
+                            lat: -2.5100,
+                            lng: -43.2400,
+                            type: 'historic',
+                            description: 'Farol histórico com vista panorâmica',
+                            images: ['https://via.placeholder.com/400x300/f54242/ffffff?text=Farol+Mandacaru'],
+                            videos: [],
+                            activities: ['Visitação', 'Vista panorâmica', 'História']
+                        }
+                    ]
+                },
+                {
+                    id: 'primeira_cruz',
+                    name: 'Primeira Cruz',
+                    lat: -2.4833,
+                    lng: -43.4167,
+                    description: 'Município com belas praias e mangues',
+                    population: '14.000 habitantes',
+                    area: '599 km²',
+                    touristPoints: [
+                        {
+                            id: 4,
+                            name: 'Praia de Caburê',
+                            lat: -2.4700,
+                            lng: -43.4000,
+                            type: 'beach',
+                            description: 'Praia paradisíaca entre o mar e o rio',
+                            images: ['https://via.placeholder.com/400x300/42ddf5/ffffff?text=Praia+Cabure'],
+                            videos: [],
+                            activities: ['Banho de mar', 'Passeio de barco', 'Pesca']
+                        }
+                    ]
+                },
+                {
+                    id: 'humberto_campos',
+                    name: 'Humberto de Campos',
+                    lat: -2.5833,
+                    lng: -43.0167,
+                    description: 'Terra do poeta Humberto de Campos',
+                    population: '28.000 habitantes',
+                    area: '2.238 km²',
+                    touristPoints: [
+                        {
+                            id: 5,
+                            name: 'Casa do Poeta',
+                            lat: -2.5800,
+                            lng: -43.0100,
+                            type: 'cultural',
+                            description: 'Museu dedicado ao poeta Humberto de Campos',
+                            images: ['https://via.placeholder.com/400x300/9b42f5/ffffff?text=Casa+do+Poeta'],
+                            videos: [],
+                            activities: ['Visitação', 'Cultura', 'Literatura']
+                        }
+                    ]
+                },
+                {
+                    id: 'paulino_neves',
+                    name: 'Paulino Neves',
+                    lat: -2.6667,
+                    lng: -42.7833,
+                    description: 'Município com acesso aos Lençóis Maranhenses',
+                    population: '13.000 habitantes',
+                    area: '1.002 km²',
+                    touristPoints: [
+                        {
+                            id: 6,
+                            name: 'Lagoa da Gaivota',
+                            lat: -2.6600,
+                            lng: -42.7700,
+                            type: 'nature',
+                            description: 'Lagoa cercada por dunas com águas cristalinas',
+                            images: ['https://via.placeholder.com/400x300/f5d442/ffffff?text=Lagoa+Gaivota'],
+                            videos: [],
+                            activities: ['Banho', 'Fotografia', 'Caminhada']
+                        }
+                    ]
+                },
+                {
+                    id: 'tutoia',
+                    name: 'Tutóia',
+                    lat: -2.7619,
+                    lng: -42.2744,
+                    description: 'Portal de entrada do Delta do Parnaíba',
+                    population: '44.000 habitantes',
+                    area: '1.168 km²',
+                    touristPoints: [
+                        {
+                            id: 7,
+                            name: 'Delta do Parnaíba',
+                            lat: -2.7500,
+                            lng: -42.2500,
+                            type: 'nature',
+                            description: 'Único delta em mar aberto das Américas',
+                            images: ['https://via.placeholder.com/400x300/4287f5/ffffff?text=Delta+Parnaiba'],
+                            videos: [],
+                            activities: ['Passeio de barco', 'Observação de aves', 'Pesca']
+                        }
+                    ]
+                },
+                {
+                    id: 'araioses',
+                    name: 'Araioses',
+                    lat: -2.9394,
+                    lng: -41.9306,
+                    description: 'Município costeiro com praias selvagens',
+                    population: '42.000 habitantes',
+                    area: '1.193 km²',
+                    touristPoints: [
+                        {
+                            id: 8,
+                            name: 'Praia de Carnaubinha',
+                            lat: -2.9200,
+                            lng: -41.9100,
+                            type: 'beach',
+                            description: 'Praia selvagem com coqueiros nativos',
+                            images: ['https://via.placeholder.com/400x300/42ddf5/ffffff?text=Praia+Carnaubinha'],
+                            videos: [],
+                            activities: ['Banho de mar', 'Caminhada', 'Contemplação']
+                        }
+                    ]
+                },
+                {
+                    id: 'agua_doce',
+                    name: 'Água Doce do Maranhão',
+                    lat: -3.2667,
+                    lng: -41.8667,
+                    description: 'Município rural com tradições preservadas',
+                    population: '11.000 habitantes',
+                    area: '717 km²',
+                    touristPoints: [
+                        {
+                            id: 9,
+                            name: 'Casa de Farinha Tradicional',
+                            lat: -3.2600,
+                            lng: -41.8600,
+                            type: 'cultural',
+                            description: 'Tradição centenária de produção de farinha',
+                            images: ['https://via.placeholder.com/400x300/9b42f5/ffffff?text=Casa+Farinha'],
+                            videos: [],
+                            activities: ['Visitação', 'Cultura', 'Gastronomia']
+                        }
+                    ]
+                },
+                {
+                    id: 'santana_maranhao',
+                    name: 'Santana do Maranhão',
+                    lat: -3.2333,
+                    lng: -42.4333,
+                    description: 'Município com rica cultura local',
+                    population: '24.000 habitantes',
+                    area: '1.188 km²',
+                    touristPoints: [
+                        {
+                            id: 10,
+                            name: 'Festival Folclórico',
+                            lat: -3.2300,
+                            lng: -42.4300,
+                            type: 'cultural',
+                            description: 'Celebração das tradições maranhenses',
+                            images: ['https://via.placeholder.com/400x300/9b42f5/ffffff?text=Festival+Folclorico'],
+                            videos: [],
+                            activities: ['Dança', 'Música', 'Artesanato']
+                        }
+                    ]
+                },
+                {
+                    id: 'magalhaes_almeida',
+                    name: 'Magalhães de Almeida',
+                    lat: -3.3500,
+                    lng: -42.1667,
+                    description: 'Município com patrimônio histórico',
+                    population: '18.000 habitantes',
+                    area: '824 km²',
+                    touristPoints: [
+                        {
+                            id: 11,
+                            name: 'Igreja do Rosário',
+                            lat: -3.3450,
+                            lng: -42.1600,
+                            type: 'cultural',
+                            description: 'Igreja histórica do século XVIII',
+                            images: ['https://via.placeholder.com/400x300/9b42f5/ffffff?text=Igreja+Rosario'],
+                            videos: [],
+                            activities: ['Visitação', 'História', 'Arquitetura']
+                        }
+                    ]
+                }
+            ]
+        };
                     description: 'Cidade histórica com belezas naturais',
                     population: '15.000 habitantes',
                     area: '1.202 km²',
@@ -644,18 +1024,45 @@
 
         // Criar popup para features do GeoJSON
         function createGeoJSONPopup(properties) {
-            const name = properties.name || properties.nome || properties.NAME || 'Área';
-            const area = properties.area || properties.AREA || '';
-            const population = properties.population || properties.populacao || properties.POP || '';
+            const name = properties.name || properties.nome || properties.NAME || properties.Município || 'Área';
+            const area = properties.area || properties.AREA || properties.Área || '';
+            const population = properties.population || properties.populacao || properties.POP || properties.População || '';
+            const textoA = properties['Texto de A'] || properties.textoA || properties.texto_a || '';
             
             return `
-                <div class="text-center">
-                    <h6><i class="fas fa-map-marked-alt me-2"></i>${name}</h6>
-                    ${area ? `<p><strong>Área:</strong> ${area}</p>` : ''}
-                    ${population ? `<p><strong>População:</strong> ${population}</p>` : ''}
-                    <button class="btn btn-custom btn-sm" onclick="exploreArea('${name}')">
-                        <i class="fas fa-search me-1"></i>Explorar Área
-                    </button>
+                <div class="popup-content" style="max-width: 300px;">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-map-marked-alt me-2 text-primary"></i>
+                        <strong>${name}</strong>
+                    </h6>
+                    ${area ? `
+                        <p class="mb-2">
+                            <i class="fas fa-expand-arrows-alt me-2 text-info"></i>
+                            <strong>Área:</strong> ${area}
+                        </p>
+                    ` : ''}
+                    ${population ? `
+                        <p class="mb-2">
+                            <i class="fas fa-users me-2 text-success"></i>
+                            <strong>População:</strong> ${population}
+                        </p>
+                    ` : ''}
+                    ${textoA ? `
+                        <div class="mb-3">
+                            <p class="mb-1">
+                                <i class="fas fa-info-circle me-2 text-warning"></i>
+                                <strong>Informações:</strong>
+                            </p>
+                            <p class="small text-muted" style="line-height: 1.4;">
+                                ${textoA}
+                            </p>
+                        </div>
+                    ` : ''}
+                    <div class="text-center">
+                        <button class="btn btn-custom btn-sm" onclick="exploreArea('${name}')">
+                            <i class="fas fa-search me-1"></i>Explorar Área
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -920,11 +1327,44 @@
             
             if (slides.length <= 1) return;
             
+            // Configurar vídeos
+            slides.forEach((slide, index) => {
+                const video = slide.querySelector('video');
+                if (video) {
+                    video.addEventListener('loadeddata', () => {
+                        slide.classList.add('loaded');
+                    });
+                    
+                    video.addEventListener('error', () => {
+                        // Se o vídeo não carregar, usar imagem de fallback
+                        slide.style.backgroundImage = "url('images/hero/lencois_maranhenses_1.jpg')";
+                        video.style.display = 'none';
+                        slide.classList.add('loaded');
+                    });
+                }
+            });
+            
             setInterval(() => {
                 slides[currentSlide].classList.remove('active');
+                
+                // Pausar vídeo atual se existir
+                const currentVideo = slides[currentSlide].querySelector('video');
+                if (currentVideo) {
+                    currentVideo.pause();
+                }
+                
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
-            }, 5000); // Muda a cada 5 segundos
+                
+                // Reproduzir próximo vídeo se existir
+                const nextVideo = slides[currentSlide].querySelector('video');
+                if (nextVideo) {
+                    nextVideo.currentTime = 0;
+                    nextVideo.play().catch(e => {
+                        console.log('Erro ao reproduzir vídeo:', e);
+                    });
+                }
+            }, 6000); // Aumentado para 6 segundos para dar tempo ao vídeo
         }
     </script>
 </body>
