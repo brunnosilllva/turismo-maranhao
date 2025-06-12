@@ -278,6 +278,39 @@
             color: #2e7d32;
             border-bottom: 2px solid #e8f5e8;
             padding-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .municipality-marker {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        /* Debug para vídeo */
+        .hero-slide.video-slide {
+            position: relative;
+        }
+        
+        .hero-slide.video-slide::after {
+            content: "Carregando vídeo...";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1;
+        }
+        
+        .hero-slide.video-slide.loaded::after {
+            display: none;
         }
         
         /* Melhorias de acessibilidade */
@@ -340,11 +373,13 @@
             <div class="hero-slide" style="background-image: url('images/hero/guaras_floresta_1.jpg')"></div>
             <div class="hero-slide" style="background-image: url('images/hero/praia_cabure_1.jpg')"></div>
             <div class="hero-slide video-slide">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="videos/hero/lencois_drone.mp4" type="video/mp4">
-                    <!-- Fallback para navegadores que não suportam vídeo -->
-                    <div style="background-image: url('images/hero/lencois_maranhenses_1.jpg'); width: 100%; height: 100%; background-size: cover; background-position: center;"></div>
+                    <source src="videos/hero/lencois_drone.webm" type="video/webm">
+                    <!-- Fallback para quando o vídeo não carrega -->
                 </video>
+                <!-- Imagem de fallback caso o vídeo não funcione -->
+                <div class="video-fallback" style="display: none; background-image: url('images/hero/lencois_maranhenses_1.jpg'); width: 100%; height: 100%; background-size: cover; background-position: center;"></div>
             </div>
             <div class="hero-slide" style="background-image: url('images/hero/farol_mandacaru_1.jpg')"></div>
         </div>
@@ -382,7 +417,7 @@
                 <div class="text-center mt-4">
                     <h4 class="text-success mb-3">Principais Potenciais</h4>
                     <span class="badge bg-success fs-5 px-4 py-3 me-3 mb-2">
-                        <i class="fas fa-leaf me-2"></i>10 Municípios Visitados
+                        <i class="fas fa-leaf me-2"></i>10 Municípios Preservados
                     </span>
                     <span class="badge bg-info fs-5 px-4 py-3 me-3 mb-2">
                         <i class="fas fa-water me-2"></i>Rios Exuberantes
@@ -474,70 +509,71 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container my-5">
-        <!-- Main Map View -->
-        <div id="mainMapSection">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-lg">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="mb-0"><i class="fas fa-map me-2"></i>Mapa do Polo Turístico</h3>
+    <div class="main-content-section">
+        <div class="container my-5">
+            <!-- Main Map View -->
+            <div id="mainMapSection">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-lg">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="mb-0"><i class="fas fa-map me-2"></i>Mapa do Polo Turístico</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="mainMap" class="map-container"></div>
+                            </div>
                         </div>
-                        <div class="card-body p-0">
-                            <div id="mainMap" class="map-container"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="intro-section">
+                            <h4 class="text-primary mb-3">
+                                <i class="fas fa-map-marked-alt me-2"></i>Polo Floresta dos Guarás
+                            </h4>
+                            <p>
+                                O Polo Floresta dos Guarás é composto por dez municípios estrategicamente localizados no litoral norte do Maranhão, formando um mosaico de paisagens únicas que combinam praias paradisíacas, manguezais preservados e comunidades tradicionais.
+                            </p>
+                            <p>
+                                Os municípios de <strong>Apicum-Açu</strong>, <strong>Bacuri</strong>, <strong>Bequimão</strong>, <strong>Cedral</strong>, <strong>Central do Maranhão</strong>, <strong>Cururupu</strong>, <strong>Guimarães</strong>, <strong>Mirinzal</strong>, <strong>Porto Rico do Maranhão</strong> e <strong>Serrano do Maranhão</strong> oferecem experiências autênticas de turismo ecológico e cultural.
+                            </p>
+                            <p>
+                                <strong>A importância do turismo</strong> para esta região transcende a geração de renda, promovendo a preservação ambiental, o fortalecimento das culturas locais e o desenvolvimento sustentável das comunidades. O ecoturismo e o turismo comunitário emergem como ferramentas de conservação e valorização do patrimônio natural e cultural maranhense.
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="intro-section">
-                        <h4 class="text-primary mb-3">
-                            <i class="fas fa-map-marked-alt me-2"></i>Polo Floresta dos Guarás
-                        </h4>
-                        <p>
-                            O Polo Floresta dos Guarás é composto por dez municípios estrategicamente localizados no litoral norte do Maranhão, formando um mosaico de paisagens únicas que combinam praias paradisíacas, manguezais preservados e comunidades tradicionais.
-                        </p>
-                        <p>
-                            Os municípios de <strong>Barreirinhas</strong>, <strong>Santo Amaro do Maranhão</strong>, <strong>Primeira Cruz</strong>, <strong>Humberto de Campos</strong>, <strong>Paulino Neves</strong>, <strong>Tutóia</strong>, <strong>Araioses</strong>, <strong>Água Doce do Maranhão</strong>, <strong>Santana do Maranhão</strong> e <strong>Magalhães de Almeida</strong> oferecem experiências autênticas de turismo ecológico e cultural.
-                        </p>
-                        <p>
-                            <strong>A importância do turismo</strong> para esta região transcende a geração de renda, promovendo a preservação ambiental, o fortalecimento das culturas locais e o desenvolvimento sustentável das comunidades. O ecoturismo e o turismo comunitário emergem como ferramentas de conservação e valorização do patrimônio natural e cultural maranhense.
-                        </p>
+                
+                <!-- Stats Cards Below Map -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-city fa-3x text-primary mb-3"></i>
+                            <h4>10 Municípios</h4>
+                            <p class="text-muted">Conectados no polo turístico</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-map-pin fa-3x text-success mb-3"></i>
+                            <h4>50+ Pontos</h4>
+                            <p class="text-muted">Turísticos mapeados</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-images fa-3x text-warning mb-3"></i>
+                            <h4>200+ Fotos</h4>
+                            <p class="text-muted">E vídeos coletados</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h4>15+ Comunidades</h4>
+                            <p class="text-muted">Tradicionais preservadas</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Stats Cards Below Map -->
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-city fa-3x text-primary mb-3"></i>
-                        <h4>10 Municípios</h4>
-                        <p class="text-muted">Conectados no polo turístico</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-map-pin fa-3x text-success mb-3"></i>
-                        <h4>50+ Pontos</h4>
-                        <p class="text-muted">Turísticos mapeados</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-images fa-3x text-warning mb-3"></i>
-                        <h4>200+ Fotos</h4>
-                        <p class="text-muted">E vídeos coletados</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <i class="fas fa-users fa-3x text-info mb-3"></i>
-                        <h4>15+ Comunidades</h4>
-                        <p class="text-muted">Tradicionais preservadas</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Municipality View -->
         <div id="municipalitySection" style="display: none;">
@@ -932,39 +968,37 @@
 
         // Inicializar mapa principal
         function initMainMap() {
+            if (mainMap) {
+                mainMap.remove();
+            }
+            
             mainMap = L.map('mainMap').setView([-2.6, -43.0], 9);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(mainMap);
 
-            // Carregar e adicionar GeoJSON
+            // Carregar e adicionar GeoJSON PRIMEIRO
             loadGeoJSON();
 
-            // Adicionar marcadores dos municípios
-            touristData.municipalities.forEach(municipality => {
-                const marker = L.marker([municipality.lat, municipality.lng])
-                    .bindPopup(`
-                        <div class="text-center">
-                            <h5>${municipality.name}</h5>
-                            <p>${municipality.description}</p>
-                            <button class="btn btn-custom btn-sm" onclick="showMunicipality('${municipality.id}')">
-                                Explorar <i class="fas fa-arrow-right ms-1"></i>
-                            </button>
-                        </div>
-                    `)
-                    .addTo(mainMap);
-            });
+            // Depois adicionar marcadores dos municípios
+            setTimeout(() => {
+                addMunicipalityMarkers();
+            }, 1000);
         }
 
         // Carregar GeoJSON
         async function loadGeoJSON() {
             try {
+                console.log('Tentando carregar GeoJSON...');
                 const response = await fetch('data/polo_floresta_guaras.geojson');
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
                 const geojsonData = await response.json();
+                console.log('GeoJSON carregado com sucesso:', geojsonData);
                 
                 // Adicionar GeoJSON ao mapa com estilo
                 const geojsonLayer = L.geoJSON(geojsonData, {
@@ -975,14 +1009,17 @@
                             opacity: 1,
                             color: '#2e7d32',
                             dashArray: '3',
-                            fillOpacity: 0.3
+                            fillOpacity: 0.4
                         };
                     },
                     onEachFeature: function(feature, layer) {
                         // Popup para cada feature
                         if (feature.properties) {
                             const popupContent = createGeoJSONPopup(feature.properties);
-                            layer.bindPopup(popupContent);
+                            layer.bindPopup(popupContent, {
+                                maxWidth: 300,
+                                className: 'custom-popup'
+                            });
                         }
                         
                         // Eventos de hover
@@ -997,12 +1034,47 @@
                 // Ajustar visualização para mostrar todo o GeoJSON
                 mainMap.fitBounds(geojsonLayer.getBounds());
                 
-                console.log('GeoJSON carregado com sucesso');
+                console.log('GeoJSON adicionado ao mapa com sucesso');
                 
             } catch (error) {
                 console.error('Erro ao carregar GeoJSON:', error);
-                // Continuar sem o GeoJSON se houver erro
+                console.log('Continuando sem o GeoJSON...');
+                // Se não conseguir carregar o GeoJSON, usar visualização padrão
+                mainMap.setView([-2.6, -43.0], 9);
             }
+        }
+
+        // Adicionar marcadores dos municípios
+        function addMunicipalityMarkers() {
+            touristData.municipalities.forEach(municipality => {
+                const marker = L.marker([municipality.lat, municipality.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="background: #2e7d32; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"><i class="fas fa-city"></i></div>`,
+                        className: 'municipality-marker',
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                })
+                .bindPopup(createMunicipalityPopup(municipality))
+                .addTo(mainMap);
+            });
+        }
+
+        // Criar popup do município
+        function createMunicipalityPopup(municipality) {
+            return `
+                <div class="text-center popup-content">
+                    <h6><i class="fas fa-city me-2 text-primary"></i><strong>${municipality.name}</strong></h6>
+                    <p class="small mb-2">${municipality.description}</p>
+                    <div class="mb-2">
+                        <small><i class="fas fa-users me-1 text-info"></i><strong>População:</strong> ${municipality.population}</small><br>
+                        <small><i class="fas fa-expand-arrows-alt me-1 text-success"></i><strong>Área:</strong> ${municipality.area}</small>
+                    </div>
+                    <button class="btn btn-custom btn-sm" onclick="showMunicipality('${municipality.id}')">
+                        Explorar <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            `;
         }
 
         // Função para definir cor baseada nas propriedades da feature
@@ -1325,26 +1397,43 @@
             const slides = document.querySelectorAll('.hero-slide');
             let currentSlide = 0;
             
+            console.log(`Encontradas ${slides.length} slides`);
+            
             if (slides.length <= 1) return;
             
             // Configurar vídeos
             slides.forEach((slide, index) => {
                 const video = slide.querySelector('video');
                 if (video) {
+                    console.log(`Configurando vídeo no slide ${index}`);
+                    
                     video.addEventListener('loadeddata', () => {
+                        console.log(`Vídeo ${index} carregado com sucesso`);
                         slide.classList.add('loaded');
                     });
                     
-                    video.addEventListener('error', () => {
-                        // Se o vídeo não carregar, usar imagem de fallback
-                        slide.style.backgroundImage = "url('images/hero/lencois_maranhenses_1.jpg')";
-                        video.style.display = 'none';
+                    video.addEventListener('canplay', () => {
+                        console.log(`Vídeo ${index} pode ser reproduzido`);
+                    });
+                    
+                    video.addEventListener('error', (e) => {
+                        console.error(`Erro no vídeo ${index}:`, e);
+                        // Mostrar imagem de fallback
+                        const fallback = slide.querySelector('.video-fallback');
+                        if (fallback) {
+                            video.style.display = 'none';
+                            fallback.style.display = 'block';
+                        }
                         slide.classList.add('loaded');
                     });
+                    
+                    // Tentar carregar o vídeo
+                    video.load();
                 }
             });
             
-            setInterval(() => {
+            // Função para trocar slides
+            function changeSlide() {
                 slides[currentSlide].classList.remove('active');
                 
                 // Pausar vídeo atual se existir
@@ -1356,15 +1445,22 @@
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
                 
+                console.log(`Mudando para slide ${currentSlide}`);
+                
                 // Reproduzir próximo vídeo se existir
                 const nextVideo = slides[currentSlide].querySelector('video');
-                if (nextVideo) {
+                if (nextVideo && nextVideo.readyState >= 2) {
                     nextVideo.currentTime = 0;
-                    nextVideo.play().catch(e => {
+                    nextVideo.play().then(() => {
+                        console.log(`Vídeo ${currentSlide} iniciado`);
+                    }).catch(e => {
                         console.log('Erro ao reproduzir vídeo:', e);
                     });
                 }
-            }, 6000); // Aumentado para 6 segundos para dar tempo ao vídeo
+            }
+            
+            // Iniciar slideshow
+            setInterval(changeSlide, 6000);
         }
     </script>
 </body>
